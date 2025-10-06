@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,69 +8,39 @@ datasource db {
 }
 
 model CARSFormSubmission {
-  id        String   @id @default(uuid())
+  id String @id @default(uuid())
 
-  // Personal Relationships
   personalRelationshipsScore        Float
   personalRelationshipsObservations String?
-
-  // Imitation
-  imitationScore        Float
-  imitationObservations String?
-
-  // Emotional Response
-  emotionalResponseScore        Float
-  emotionalResponseObservations String?
-
-  // Body Use
-  bodyUseScore        Float
-  bodyUseObservations String?
-
-  // Object Use
-  objectUseScore        Float
-  objectUseObservations String?
-
-  // Response to Change
-  responseToChangeScore        Float
-  responseToChangeObservations String?
-
-  // Visual Response
-  visualResponseScore        Float
-  visualResponseObservations String?
-
-  // Auditory Response
-  auditoryResponseScore        Float
-  auditoryResponseObservations String?
-
-  // Taste, Smell & Touch
-  tasteSmelLTouchScore        Float
-  tasteSmelLTouchObservations String?
-
-  // Fear or Nervousness
-  fearOrNervousnessScore        Float
-  fearOrNervousnessObservations String?
-
-  // Verbal Communication
-  verbalCommunicationScore        Float
-  verbalCommunicationObservations String?
-
-  // Non-Verbal Communication
-  nonVerbalCommunicationScore        Float
+  imitationScore                    Float
+  imitationObservations             String?
+  emotionalResponseScore            Float
+  emotionalResponseObservations     String?
+  bodyUseScore                      Float
+  bodyUseObservations               String?
+  objectUseScore                    Float
+  objectUseObservations             String?
+  responseToChangeScore             Float
+  responseToChangeObservations      String?
+  visualResponseScore               Float
+  visualResponseObservations        String?
+  auditoryResponseScore             Float
+  auditoryResponseObservations      String?
+  tasteSmelLTouchScore              Float
+  tasteSmelLTouchObservations       String?
+  fearOrNervousnessScore            Float
+  fearOrNervousnessObservations     String?
+  verbalCommunicationScore          Float
+  verbalCommunicationObservations   String?
+  nonVerbalCommunicationScore       Float
   nonVerbalCommunicationObservations String?
+  activityLevelScore                Float
+  activityLevelObservations         String?
+  intellectualResponseScore         Float
+  intellectualResponseObservations  String?
+  generalImpressionsScore           Float
+  generalImpressionsObservations    String?
 
-  // Activity Level
-  activityLevelScore        Float
-  activityLevelObservations String?
-
-  // Intellectual Response
-  intellectualResponseScore        Float
-  intellectualResponseObservations String?
-
-  // General Impressions
-  generalImpressionsScore        Float
-  generalImpressionsObservations String?
-
-  // Metadata
   totalScore Float
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt

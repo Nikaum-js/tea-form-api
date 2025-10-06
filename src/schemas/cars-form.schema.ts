@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-// Zod schema for CARS form score field
 export const scoreFieldSchema = z.object({
   score: z
     .number()
@@ -10,7 +9,6 @@ export const scoreFieldSchema = z.object({
   observations: z.string().optional().default(""),
 });
 
-// Zod schema for complete CARS form submission
 export const createCARSFormSchema = z.object({
   personalRelationships: scoreFieldSchema,
   imitation: scoreFieldSchema,
