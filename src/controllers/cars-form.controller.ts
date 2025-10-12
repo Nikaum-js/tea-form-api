@@ -4,6 +4,8 @@ import { z } from "zod";
 import { prisma } from "../lib/prisma";
 import { createCARSFormSchema } from "../schemas/cars-form.schema";
 import { calculateTotalScore, mapCARSFormToPrisma } from "../utils/cars-form.utils";
+import { CARSAnalysisService } from "../services/cars-analysis.service";
+import { PDFGeneratorService } from "../services/pdf-generator.service";
 
 export async function createCARSForm(
   request: FastifyRequest,
@@ -18,10 +20,53 @@ export async function createCARSForm(
       data: prismaData,
     });
 
+    let psychologicalReport: string | undefined;
+    let pdfBuffer: Buffer | undefined;
+
+    try {
+      const apiKey = process.env.DEEPSEEK_API_KEY;
+      if (!apiKey) {
+        request.log.warn("DEEPSEEK_API_KEY not found - skipping report generation");
+      } else {
+        const analysisService = new CARSAnalysisService(apiKey);
+        psychologicalReport = await analysisService.generatePsychologicalReport(
+          validatedData,
+          totalScore
+        );
+        request.log.info("Psychological report generated successfully");
+
+        // Generate PDF from report
+        try {
+          const pdfService = new PDFGeneratorService();
+          const pdfStream = pdfService.generateReportPDF(psychologicalReport, totalScore);
+
+          // Convert stream to buffer
+          const chunks: Buffer[] = [];
+          for await (const chunk of pdfStream) {
+            chunks.push(chunk as Buffer);
+          }
+          pdfBuffer = Buffer.concat(chunks);
+
+          request.log.info(`PDF generated successfully. Size: ${pdfBuffer.length} bytes`);
+        } catch (pdfError) {
+          request.log.error({ err: pdfError }, "Failed to generate PDF");
+          if (pdfError instanceof Error) {
+            request.log.error(`PDF Error: ${pdfError.message}`);
+            request.log.error(`PDF Stack: ${pdfError.stack}`);
+          }
+        }
+      }
+    } catch (analysisError) {
+      request.log.error({ err: analysisError }, "Failed to generate psychological report");
+    }
+
     return reply.status(201).send({
       id: submission.id,
       totalScore: submission.totalScore,
       createdAt: submission.createdAt,
+      psychologicalReport,
+      pdfReport: pdfBuffer ? pdfBuffer.toString('base64') : undefined,
+      formData: validatedData,
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
